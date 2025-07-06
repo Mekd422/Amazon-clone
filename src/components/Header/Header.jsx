@@ -8,6 +8,7 @@ import {BsSearch} from "react-icons/bs";
 import Lowerheader from '../Header/Lowerheader';
 import { DataContext } from '../Dataprovider/Dataprovider';
 import { auth } from '../../Utility/firebase';
+import { signOut } from "firebase/auth";
 
 
 
@@ -63,7 +64,7 @@ export default function Header() {
                             user? (
                                 <>
                                     <p>Hello {user?.email?.split('@')[0]}</p>
-                                    <span onClick={auth.signOut}>Sign Out</span>
+                                    <span onClick={()=> signOut(auth)}>Sign Out</span>
                                 </>
                                 ) : (
                                 <>
