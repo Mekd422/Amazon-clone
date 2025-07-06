@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import classes from "./Auth.module.css"
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import amazonLogo from '../../assets/amazon assets/image.png';
 import {auth } from "../../Utility/firebase"
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
@@ -19,24 +19,28 @@ export default function Auth() {
     signUp: false
   })
 
-  const [{user}, dispatch] = useContext(DataContext)
+  const [{user}, dispatch] = useContext(DataContext);
+  const navigate = useNavigate();
 
   console.log(user);
 
-  console.log(auth, error, seterror)
+  console.log(auth, error, seterror);
 
   const authHandler = async(e) =>{
     e.preventDefault();
-    console.log(e.target.name);
+    
     if(e.target.name === "signin"){
       setloading({...loading, signIn:true})
+
+      // firebase auth
       signInWithEmailAndPassword(auth, email, password).then((userInfo)=>{
         
         dispatch({
-          type: Type.set_user,
+          type: Type.SET_USER,
           user:userInfo.user
         })
         setloading({...loading, signIn: false})
+        navigate('/');
       }).catch((err)=>{
         seterror(err.message)
         setloading({...loading, signIn: false})
@@ -47,10 +51,11 @@ export default function Auth() {
       createUserWithEmailAndPassword(auth, email, password).then((userInfo)=>{
         
         dispatch({
-          type:Type.set_user,
+          type:Type.SET_USER,
           user:userInfo.user
         })
         setloading({...loading, signUp:false})
+        navigate('/');
       }).catch((err)=>{
         seterror(err.message)
         setloading({...loading, signUp:false})
@@ -79,8 +84,10 @@ export default function Auth() {
           type="password" id='password' />
         </div>
 
-        <button className={classes.login__signinbutton}>
-          Sign In
+        <button name='signin' type='submit' onClick={authHandler} className={classes.login__signinbutton}>
+          {loading.signIn ? (<ClipLoader color='#000' size={15}></ClipLoader>) : 
+          ('Sign In')}
+          
         </button>
       </form>
 
@@ -90,8 +97,9 @@ export default function Auth() {
         Interest-Based ADs Notice.
       </p>
 
-      <button className={classes.login__registerbutton}>
-        Create Your Amazon Account
+      <button name='signup' type='submit' onClick={authHandler} className={classes.login__registerbutton}>
+        {loading.signUp ? (<ClipLoader color='#000' size={15}></ClipLoader>) : 
+          ('Create your Amazon Account')}
       </button>
       {
         error && <small style={{paddingTop: "5px", color: "red"}}>
