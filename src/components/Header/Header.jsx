@@ -7,14 +7,15 @@ import { BiCart } from "react-icons/bi";
 import {BsSearch} from "react-icons/bs";
 import Lowerheader from '../Header/Lowerheader';
 import { DataContext } from '../Dataprovider/Dataprovider';
+import { auth } from '../../Utility/firebase';
 
 
 
 
 export default function Header() {
 
-    const [state, dispatch] = useContext(DataContext);
-    const { basket } = state;
+    const [ {user,basket}, dispatch] = useContext(DataContext);
+    
     console.log(dispatch);
     const totalItem = basket?.reduce((amount, item) =>{
         return item.amount + amount
@@ -46,7 +47,7 @@ export default function Header() {
                     <option value="">All</option>
                 </select>
                 <input type="text" placeholder='Search product'/>
-                <BsSearch size ={25}/>
+                <BsSearch size ={38}/>
                 
             </div>
             <div className={classes.order__container}>
@@ -56,11 +57,24 @@ export default function Header() {
                         <option value="">En</option>
                     </select>
                 </Link>
-                <Link to="/Auth">
+                <Link to={!user && "/Auth"}>
                     <div>
-                        <p>sign in</p>
-                        <span>account and lists</span>
+                        {
+                            user? (
+                                <>
+                                    <p>Hello {user?.email?.split('@')[0]}</p>
+                                    <span onClick={auth.signOut}>Sign Out</span>
+                                </>
+                                ) : (
+                                <>
+                                    <p>Hello, Sign In</p>
+                                    <span>account and lists</span>
+                                </>
+                            )
+                        }
+                        
                     </div>
+                    
                 </Link>
                 <Link to="/orders">
                     <div>
