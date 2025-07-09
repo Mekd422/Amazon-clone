@@ -7,3 +7,18 @@
 .payment{
     padding: 30px;
 }
+.flex{
+    display: flex;
+    gap: 20px;
+    padding: 30px;
+}
+.flex h3{
+    min-width: 300px;
+}
+
+.flex img{
+    width: 80px !important;
+}
+.flex div{
+    height: auto !important;
+}

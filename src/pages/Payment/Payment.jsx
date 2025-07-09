@@ -1,6 +1,7 @@
 import React, {useContext} from 'react'
 import classes from './Payment.module.css'
 import { DataContext } from '../../components/Dataprovider/Dataprovider';
+import ProductCard from '../../components/product/ProductCard'
 
 
 import LayOut from '../../components/LayOut/LayOut'
@@ -19,10 +20,10 @@ export default function Payment() {
       {/*payment method */}
       <section className={classes.payment}>
         {/*address */}
-        <div>
+        <div className={classes.flex}>
           <h3>Delivery Address</h3>
           <div>
-            <div>abe@email.com</div>
+            <div>{user.email}</div>
             <div>123 react</div>
             <div>chicago</div>
           </div>
@@ -30,11 +31,28 @@ export default function Payment() {
         <hr />
 
         {/*product */}
-        <div></div>
+        <div className={classes.flex}>
+          <h3>Review items and delivery</h3>
+          <div>
+            {
+              basket?.map((item)=><ProductCard product={item} flex={true}/>)
+            }
+          </div>
+        </div>
         <hr/>
 
         {/*card form */}
-        <div></div>
+        <div className={classes.flex}>
+          <h3>Payment methods</h3>
+          <div>
+            <div>
+              <form action="">
+                
+              </form>
+            </div>
+
+          </div>
+        </div>
       </section>
                 
         </LayOut>
