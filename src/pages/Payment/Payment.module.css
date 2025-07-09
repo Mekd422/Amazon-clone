@@ -22,3 +22,32 @@
 .flex div{
     height: auto !important;
 }
+.payment__card__container{
+    max-width: 350px;
+    width: 100%;
+}
+.payment__details{
+    font-size: 20px;
+}
+.payment__price{
+    padding: 20px;
+}
+.payment__price > div{
+    display: flex;
+    font-size: 16px;
+    gap: 10px;
+}
+
+.payment__details{
+    margin-top: 15px;
+    width: 100%;
+    border: none;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    padding: 8px 10px;
+    cursor: pointer;
+
+}
+.payment__details button:hover{
+    background-color: var(--primary-shade);
+}
