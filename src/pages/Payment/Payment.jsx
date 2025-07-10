@@ -9,6 +9,8 @@ import { axiosInstance } from '../../Api/axios';
 import { db } from '../../Utility/firebase';
 import { useNavigate } from 'react-router-dom';
 import { Type } from '../../Utility/action.type';
+import { ClipLoader } from 'react-spinners';
+
 
 export default function Payment() {
 
@@ -28,7 +30,7 @@ export default function Payment() {
     const navigate = useNavigate();
 
   const handleChange = (e)=>{
-    e?.error?.message? setCardError(e?.error?.message?) : setCardError("")
+    e?.error?.message? setCardError(e?.error?.message) : setCardError("")
   }
 
   const handlePayment = async(e) =>{
@@ -43,7 +45,7 @@ export default function Payment() {
       });
       const clientSecret = response.data?.clientSecret;
        // 2. client side (react side confirmation)
-      const confirimation = await stripe.confirmCardPayment(
+      const {paymentIntent} = await stripe.confirmCardPayment(
         clientSecret,
         {
           payment_method: {

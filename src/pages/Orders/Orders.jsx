@@ -16,10 +16,10 @@ export default function Orders() {
       db.collection("users").doc(user.uid).collection('orders').ordersBy('created', 'descending').onSnapshot((snapshot)=>{
         console.log(snapshot)
         setOrders(
-          snapshot.docs.map((doc)=>{
+          snapshot.docs.map((doc) => ({
             id: doc.id,
             data: doc.data()
-          })
+          }))
         )
       })
     }else{
