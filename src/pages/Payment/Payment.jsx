@@ -3,10 +3,11 @@ import classes from './Payment.module.css'
 import { DataContext } from '../../components/Dataprovider/Dataprovider';
 import ProductCard from '../../components/product/ProductCard'
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
-
-
 import LayOut from '../../components/LayOut/LayOut'
 import Currencyformat from '../../components/currencyformat/Currencyformat';
+import { axiosInstance } from '../../Api/axios';
+import { db } from '../../Utility/firebase';
+import { useNavigate } from 'react-router-dom';
 
 export default function Payment() {
 
@@ -19,12 +20,68 @@ export default function Payment() {
         return item.amount + amount
     }, 0);
     const [cardError, setCardError] = useState(null)
+    const [processing, setProcessing] = useState(false);
 
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
 
   const handleChange = (e)=>{
     e?.error?.message? setCardError(e?.error?.message?) : setCardError("")
+  }
+
+  const handlePayment = async(e) =>{
+    e.preventDefault();
+
+    try {
+      setProcessing(true)
+      // 1. backend || functions ----> contact to the client secret
+      const response = await axiosInstance({
+        method: "POST",
+        url: `/payment/create?total=${total * 100}`
+      });
+      const clientSecret = response.data?.clientSecret;
+       // 2. client side (react side confirmation)
+      const confirimation = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: elements.getElement(CardElement)
+          }
+        }
+        
+      )
+    // 3. after the confirmation ---> order firestore database save, clear basket
+    await db.collection("users")
+    .doc(user.uid)
+    .collection('orders')
+    .doc(paymentIntent.id)
+    .set(
+      {
+        basket: basket,
+        amount: paymentIntent.amount,
+        created: paymentIntent.created
+      }
+    );
+
+      setProcessing(false)
+      navigate('/orders', {state:{msg:"you have placed new order"}})
+
+      
+    } catch (error) {
+      console.log(error)
+      setProcessing(false)
+      
+    }
+
+
+
+
+
+   
+
+
+    
   }
   return (
     <LayOut>
@@ -59,7 +116,7 @@ export default function Payment() {
           <h3>Payment methods</h3>
           <div className={classes.payment__card__container}>
             <div className={classes.payment__details}>
-              <form action="">
+              <form onSubmit={handlePayment} >
                 {/*error */}
                 {cardError && <small style={{color : "red"}}>{cardError}</small>}
                 {/*card element */}
@@ -72,8 +129,16 @@ export default function Payment() {
                       <p>Total Order  |</p> <Currencyformat amount={total}/>
                     </span>
                   </div>
-                  <button>
-                    Pay Now
+                  <button type='submit'>
+                    {
+                      processing? (
+                        <div className={classes.loading}>
+                          <ClipLoader color="gray" size={12}/>
+                          <p>Please Wait ...</p>
+                        </div>
+
+                      ): "Pay Now"
+                    }
                   </button>
                 </div>
 
