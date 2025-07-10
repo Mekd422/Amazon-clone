@@ -13,7 +13,7 @@ export default function Orders() {
 
   useEffect(()=>{
     if(user){
-      db.collection("users").doc(user.uid).collection('orders').ordersBy('created', 'descending').onSnapshot((snapshot)=>{
+      db.collection("users").doc(user.uid).collection('orders').orderBy('created', 'descending').onSnapshot((snapshot)=>{
         console.log(snapshot)
         setOrders(
           snapshot.docs.map((doc) => ({
