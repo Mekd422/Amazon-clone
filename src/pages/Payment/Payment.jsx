@@ -8,10 +8,11 @@ import Currencyformat from '../../components/currencyformat/Currencyformat';
 import { axiosInstance } from '../../Api/axios';
 import { db } from '../../Utility/firebase';
 import { useNavigate } from 'react-router-dom';
+import { Type } from '../../Utility/action.type';
 
 export default function Payment() {
 
-  const [{basket}] = useContext(DataContext);
+  const [{user, basket}, dispatch] = useContext(DataContext);
   const total = basket.reduce((amount, item)=>{
     return item.price * item.amount + amount
   }, 0)
@@ -63,6 +64,9 @@ export default function Payment() {
         created: paymentIntent.created
       }
     );
+
+    // empty the basket 
+    dispatch({type: Type.EMPTY_BASKET});
 
       setProcessing(false)
       navigate('/orders', {state:{msg:"you have placed new order"}})
